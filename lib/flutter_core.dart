@@ -1,11 +1,11 @@
 /// Shared core for the im2m taxi apps (driver & rider).
 ///
 /// Material-aware (it builds `ThemeData`) but with **no state-management
-/// lock-in**: `Core.init` returns a [CoreContext] with framework-agnostic
+/// lock-in**: `FlutterCore.init` returns a [CoreContext] with framework-agnostic
 /// controllers (stream-based) you wire into Bloc, GetX, or Provider.
 ///
 /// ```dart
-/// final core = await Core.init(
+/// final core = await FlutterCore.init(
 ///   config: CoreConfig(
 ///     appName: 'Taxi Driver',
 ///     prefix: 'driver',
@@ -24,7 +24,7 @@
 library;
 
 // ---- Entry point + configuration ----
-export 'src/core.dart'; // Core, CoreContext
+export 'src/flutter_core.dart'; // FlutterCore, CoreContext
 export 'src/config/core_config.dart';
 export 'src/config/core_service.dart';
 export 'src/config/core_locale.dart';
@@ -37,7 +37,6 @@ export 'src/theme/app_theme.dart'; // AppTheme, ColorsModel, AppThemeGetter
 // ---- Localization (engine + delegate + keys) ----
 export 'src/localization/app_translation.dart';
 export 'src/localization/app_localizations.dart'; // AppLocalizations, context.tr
-export 'src/localization/core_keys.dart';
 
 // ---- Network ----
 export 'src/network/api_client.dart';

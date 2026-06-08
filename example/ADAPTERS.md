@@ -1,6 +1,6 @@
 # Wiring `flutter_core` to Bloc / GetX / Provider
 
-`Core.init` returns a `CoreContext` with framework-agnostic controllers:
+`FlutterCore.init` returns a `CoreContext` with framework-agnostic controllers:
 
 - `LocaleController` — `currentLocale`, `changeLocale`, `switchToNextLanguage`,
   `Stream<Locale> get changes`
@@ -15,7 +15,7 @@ rebuilds, call the methods to mutate, and read `lightTheme`/`darkTheme` for
 persistence needed.
 
 ```dart
-final core = await Core.init(config: ..., services: {...});
+final core = await FlutterCore.init(config: ..., services: {...});
 ```
 
 ## Bloc (flutter_bloc)

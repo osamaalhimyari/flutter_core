@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_core/flutter_core.dart';
+import '../localization/app_keys.dart';
 import 'app_bottom_sheet.dart';
 
 /// Tappable card that picks an image from camera/gallery and previews it.
@@ -30,12 +31,12 @@ class ImagePickerField extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.photo_camera_outlined),
-            title: Text(ctx.tr(CoreKeys.imageTakePhoto)),
+            title: Text(ctx.tr(AppKeys.imageTakePhoto)),
             onTap: () => Navigator.of(ctx).pop(ImageSource.camera),
           ),
           ListTile(
             leading: const Icon(Icons.photo_library_outlined),
-            title: Text(ctx.tr(CoreKeys.imageFromGallery)),
+            title: Text(ctx.tr(AppKeys.imageFromGallery)),
             onTap: () => Navigator.of(ctx).pop(ImageSource.gallery),
           ),
         ],
@@ -92,7 +93,7 @@ class ImagePickerField extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          context.tr(CoreKeys.imageTapToAdd),
+                          context.tr(AppKeys.imageTapToAdd),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),

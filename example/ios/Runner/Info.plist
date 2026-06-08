@@ -66,5 +66,14 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- flutter_core example: permission usage descriptions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Show your position and match you with nearby trips.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Keep sharing your position while a trip is active.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Take a photo to attach to your profile or documents.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose a photo to attach to your profile or documents.</string>
 </dict>
 </plist>

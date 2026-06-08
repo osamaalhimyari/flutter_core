@@ -1,49 +1,71 @@
-import '../localization/core_keys.dart';
+/// Semantic validation outcomes returned by [Validators].
+///
+/// Core ships **no** translation-key strings — the app maps each
+/// [ValidationError] to its own key/message (see `example/`). This keeps the
+/// validation logic in the package while the wording stays in your project.
+enum ValidationError {
+  fullNameRequired,
+  fullNameMinLength,
+  emailRequired,
+  emailInvalid,
+  passwordRequired,
+  passwordMinLength,
+  passwordNumberRequired,
+  confirmPasswordRequired,
+  passwordsDoNotMatch,
+  agreeToTermsRequired,
+  otpRequired,
+  otpIncomplete,
+  otpNumbersOnly,
+}
 
-/// Pure validation functions. Return `null` if valid, otherwise a
-/// translation KEY (not a translated string) — the widget translates it.
-/// This keeps validators testable and locale-independent.
+/// Pure validation functions. Return `null` if valid, otherwise a semantic
+/// [ValidationError] — the widget maps it to a translated message. Keeps
+/// validators testable and locale-/key-independent.
 class Validators {
   Validators._();
 
-  static String? validateFullName(String value) {
-    if (value.trim().isEmpty) return CoreKeys.fullNameRequired;
-    if (value.trim().length < 3) return CoreKeys.fullNameMinLength;
+  static ValidationError? validateFullName(String value) {
+    if (value.trim().isEmpty) return ValidationError.fullNameRequired;
+    if (value.trim().length < 3) return ValidationError.fullNameMinLength;
     return null;
   }
 
-  static String? validateEmail(String value) {
-    if (value.trim().isEmpty) return CoreKeys.emailRequired;
+  static ValidationError? validateEmail(String value) {
+    if (value.trim().isEmpty) return ValidationError.emailRequired;
     final regex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$');
-    if (!regex.hasMatch(value.trim())) return CoreKeys.emailInvalid;
+    if (!regex.hasMatch(value.trim())) return ValidationError.emailInvalid;
     return null;
   }
 
-  static String? validatePassword(String value) {
-    if (value.isEmpty) return CoreKeys.passwordRequired;
-    if (value.length < 8) return CoreKeys.passwordMinLength;
+  static ValidationError? validatePassword(String value) {
+    if (value.isEmpty) return ValidationError.passwordRequired;
+    if (value.length < 8) return ValidationError.passwordMinLength;
     if (!RegExp(r'\d').hasMatch(value)) {
-      return CoreKeys.passwordNumberRequired;
+      return ValidationError.passwordNumberRequired;
     }
     return null;
   }
 
-  static String? validateConfirmPassword(String password, String confirm) {
-    if (confirm.isEmpty) return CoreKeys.confirmPasswordRequired;
-    if (password != confirm) return CoreKeys.passwordsDoNotMatch;
+  static ValidationError? validateConfirmPassword(
+    String password,
+    String confirm,
+  ) {
+    if (confirm.isEmpty) return ValidationError.confirmPasswordRequired;
+    if (password != confirm) return ValidationError.passwordsDoNotMatch;
     return null;
   }
 
-  static String? validateTerms(bool agreed) {
-    if (!agreed) return CoreKeys.agreeToTermsRequired;
+  static ValidationError? validateTerms(bool agreed) {
+    if (!agreed) return ValidationError.agreeToTermsRequired;
     return null;
   }
 
-  static String? validateOtp(String value) {
-    if (value.isEmpty) return CoreKeys.otpRequired;
-    if (value.length < 6) return CoreKeys.otpIncomplete;
+  static ValidationError? validateOtp(String value) {
+    if (value.isEmpty) return ValidationError.otpRequired;
+    if (value.length < 6) return ValidationError.otpIncomplete;
     if (!RegExp(r'^\d+$').hasMatch(value)) {
-      return CoreKeys.otpNumbersOnly;
+      return ValidationError.otpNumbersOnly;
     }
     return null;
   }

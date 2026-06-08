@@ -4,9 +4,9 @@ Shared core for `driver_app_flutter` / `rider_app_flutter`. Material-aware
 (builds `ThemeData`) with **no state-management lock-in** and **no baked-in
 content** (colors/fonts/languages come from your app).
 
-* `Core.init(config, services, ...)` returns a `CoreContext` (DI-agnostic) —
-  wire its controllers into Bloc / GetX / Provider. `Core.config` for global
-  access. `CoreService` enum opts into `localization`, `theme`, `network`,
+* `FlutterCore.init(config, services, ...)` returns a `CoreContext`
+  (DI-agnostic) — wire its controllers into Bloc / GetX / Provider.
+  `FlutterCore.config` for global access. `CoreService` enum opts into `localization`, `theme`, `network`,
   `storage`, `deviceInfo` (any subset).
 * Framework-agnostic, stream-based `LocaleController` / `ThemeController`
   (implement `LocaleService` / `ThemeService`); persist via shared_preferences.

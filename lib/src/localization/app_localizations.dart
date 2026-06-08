@@ -6,7 +6,7 @@ import 'app_translation.dart';
 /// Flutter-native localization, fed by [AppTranslation] (which `Core.init`
 /// populates from `CoreConfig.locales`). Usage in widgets:
 ///
-///     Text(context.tr(CoreKeys.confirm))
+///     Text(context.tr('confirm'))   // your app's key
 ///     Text(context.tr(MyAppKeys.signIn))
 class AppLocalizations {
   final Locale locale;

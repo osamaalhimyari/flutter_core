@@ -5,12 +5,12 @@ One package holds everything the two apps share — config, theme, localization,
 network, storage, device info, domain service contracts, entities, and shared
 widgets — with the parts that differ (app name, base URL, colors, languages,
 endpoints…) turned into **configuration** you pass once via `CoreConfig` +
-`Core.init`.
+`FlutterCore.init`.
 
 Two deliberate design choices:
 
 - **Material-aware, but no state-management lock-in.** Core builds `ThemeData`
-  and ships widgets, but it does **not** depend on bloc/get_it. `Core.init`
+  and ships widgets, but it does **not** depend on bloc/get_it. `FlutterCore.init`
   returns a `CoreContext`; you wire its stream-based controllers into **Bloc,
   GetX, or Provider** (see [`example/ADAPTERS.md`](example/ADAPTERS.md)).
 - **No baked-in content.** Colors, fonts, languages and translations all come
@@ -21,7 +21,7 @@ Two deliberate design choices:
 
 ## What's inside
 
-| Area | Built by `Core.init` (on `CoreContext`) | You implement / construct |
+| Area | Built by `FlutterCore.init` (on `CoreContext`) | You implement / construct |
 |------|-----------------------------------------|----------------------------|
 | Localization | `LocaleController` (stream + `LocaleService`) | locale classes that `extend CoreLocale` |
 | Theme | `ThemeController` (stream + `ThemeService`, builds `ThemeData`) | `AppColors` (light + dark) |
@@ -62,7 +62,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final core = await Core.init(
+  final core = await FlutterCore.init(
     config: const CoreConfig(
       appName: 'Taxi Driver',
       prefix: 'driver',
@@ -181,7 +181,7 @@ Locale + theme selection are **persisted via shared_preferences** automatically.
 
 ## Storage (token + key/value + JSON)
 
-`Core.init` defaults to `SecureTokenStorage` + `SharedPrefsStorage`; pass your
+`FlutterCore.init` defaults to `SecureTokenStorage` + `SharedPrefsStorage`; pass your
 own to override. `KeyValueStorage` stores strings, bools, **and JSON**:
 
 ```dart
@@ -218,7 +218,7 @@ final search = SearchService(apiKey: key, localeService: core.localeController!)
 ## Endpoints
 
 `baseApiUrl`/`socketBaseUrl` feed the Dio client; named paths via
-`Core.config.endpoint('login')`. Flags/secrets via `Core.config.flag<bool>('useFakeTrips')`.
+`FlutterCore.config.endpoint('login')`. Flags/secrets via `FlutterCore.config.flag<bool>('useFakeTrips')`.
 
 ---
 

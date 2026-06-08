@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_core/flutter_core.dart';
 
+import '../localization/app_keys.dart';
+
 /// Severity of an [AppMessageDialog] — drives the icon, accent color, and the
 /// default (translated) title.
 enum AppMessageType { error, success, info }
@@ -61,15 +63,15 @@ class AppMessageDialog extends StatelessWidget {
       actions: [
         FilledButton(
           onPressed: onDismiss,
-          child: Text(context.tr(CoreKeys.dialogOk)),
+          child: Text(context.tr(AppKeys.dialogOk)),
         ),
       ],
     );
   }
 
   String get _defaultTitleKey => switch (type) {
-    AppMessageType.error => CoreKeys.dialogErrorTitle,
-    AppMessageType.success => CoreKeys.dialogSuccessTitle,
-    AppMessageType.info => CoreKeys.dialogNoticeTitle,
+    AppMessageType.error => AppKeys.dialogErrorTitle,
+    AppMessageType.success => AppKeys.dialogSuccessTitle,
+    AppMessageType.info => AppKeys.dialogNoticeTitle,
   };
 }
