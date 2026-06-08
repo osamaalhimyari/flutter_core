@@ -1,8 +1,7 @@
 name: flutter_core
-description: "Shared core for the im2m taxi apps (driver & rider): config, theme (ThemeData), localization, network, storage (token + key/value + JSON), device info, and framework-agnostic controllers. No state-management lock-in — wire it into Bloc, GetX or Provider via the CoreContext that Core.init returns."
-version: 0.3.0
-publish_to: 'none'
-homepage:
+description: "A configurable Flutter core package: theming, localization, networking, storage, and device info via framework-agnostic controllers, with no state-management lock-in."
+version: 0.1.0
+homepage: https://github.com/osamaalhimyari/flutter_core.git
 
 environment:
   sdk: ^3.8.1
