@@ -1,4 +1,4 @@
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 
 /// The app's own translation-key registry. Core no longer ships key strings —
 /// they live here, in your project. Use with `context.tr(AppKeys.confirm)`.

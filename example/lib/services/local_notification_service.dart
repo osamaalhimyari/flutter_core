@@ -1,4 +1,4 @@
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /// [NotificationService] backed by `flutter_local_notifications`.

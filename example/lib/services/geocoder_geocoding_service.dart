@@ -1,4 +1,4 @@
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 
 /// [GeocodingService] backed by `package:geocoding`.

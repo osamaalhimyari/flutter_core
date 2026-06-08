@@ -1,4 +1,4 @@
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
 /// [ForegroundService] backed by `flutter_foreground_task`. Requires the

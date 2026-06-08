@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 
 /// [SoundService] using the platform's system sound + haptics. A real app would
 /// back this with `audioplayers` and bundled cue assets; this keeps the example

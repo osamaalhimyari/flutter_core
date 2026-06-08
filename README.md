@@ -1,7 +1,7 @@
-# flutter_core
+# my_core
 
-Shared core for the **im2m taxi apps** (`driver_app_flutter` & `rider_app_flutter`).
-One package holds everything the two apps share — config, theme, localization,
+A configurable, framework-agnostic Flutter core package.
+One package holds the cross-cutting building blocks your app needs — config, theme, localization,
 network, storage, device info, domain service contracts, entities, and shared
 widgets — with the parts that differ (app name, base URL, colors, languages,
 endpoints…) turned into **configuration** you pass once via `CoreConfig` +
@@ -65,7 +65,7 @@ and the 5 domain contracts above.
 
 ```yaml
 dependencies:
-  flutter_core:
+  my_core:
     path: ../../packages/flutter_core
 ```
 
@@ -75,7 +75,7 @@ dependencies:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
@@ -83,9 +83,9 @@ Future<void> main() async {
 
   final core = await FlutterCore.init(
     config: const CoreConfig(
-      appName: 'Taxi Driver',
-      prefix: 'driver',
-      baseApiUrl: 'http://167.99.136.218:4000',
+      appName: 'My App',
+      prefix: 'app',
+      baseApiUrl: 'https://api.example.com',
       lightColors: LightColors(), // your AppColors impl
       darkColors: DarkColors(),
       locales: [EnUs(), ArAr()],  // your CoreLocale subclasses

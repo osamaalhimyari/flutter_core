@@ -1,6 +1,6 @@
 import 'package:example/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

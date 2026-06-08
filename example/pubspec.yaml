@@ -1,5 +1,5 @@
 name: example
-description: "Example app for flutter_core — exercises every service (theme, locale, network, storage, device info, location, geocoding, notifications, sound, foreground, route, search) via buttons, with permissions wired."
+description: "Example app for my_core — exercises every service (theme, locale, network, storage, device info, location, geocoding, notifications, sound, foreground, route, search) via buttons, with permissions wired."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -14,7 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # The package under test.
-  flutter_core:
+  my_core:
     path: ../
 
   # Platform impls of core's service contracts (these are why the impls live

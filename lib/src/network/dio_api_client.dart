@@ -76,16 +76,16 @@ class DioApiClient implements ApiClient {
 
   Interceptor _loggingInterceptor() => InterceptorsWrapper(
     onRequest: (o, h) {
-      developer.log('🚀 ${o.method} ${o.uri}', name: 'flutter_core.net');
+      developer.log('🚀 ${o.method} ${o.uri}', name: 'my_core.net');
       if (o.data != null) {
-        developer.log('📤 ${o.data}', name: 'flutter_core.net');
+        developer.log('📤 ${o.data}', name: 'my_core.net');
       }
       h.next(o);
     },
     onResponse: (r, h) {
       developer.log(
         '✅ ${r.statusCode} ${r.requestOptions.uri}',
-        name: 'flutter_core.net',
+        name: 'my_core.net',
       );
       h.next(r);
     },
@@ -93,7 +93,7 @@ class DioApiClient implements ApiClient {
       developer.log(
         '❌ ${e.type} ${e.requestOptions.method} ${e.requestOptions.uri}'
         ' | message=${e.message} | error=${e.error}',
-        name: 'flutter_core.net',
+        name: 'my_core.net',
       );
       h.next(e);
     },

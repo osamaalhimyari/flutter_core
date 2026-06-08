@@ -1,4 +1,4 @@
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 import 'package:geolocator/geolocator.dart';
 
 /// [LocationService] backed by `geolocator`. This is the kind of impl that

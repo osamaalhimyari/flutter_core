@@ -1,4 +1,4 @@
-/// Shared core for the im2m taxi apps (driver & rider).
+/// A configurable, framework-agnostic Flutter core package.
 ///
 /// Material-aware (it builds `ThemeData`) but with **no state-management
 /// lock-in**: `FlutterCore.init` returns a [CoreContext] with framework-agnostic
@@ -7,9 +7,9 @@
 /// ```dart
 /// final core = await FlutterCore.init(
 ///   config: CoreConfig(
-///     appName: 'Taxi Driver',
-///     prefix: 'driver',
-///     baseApiUrl: 'http://167.99.136.218:4000',
+///     appName: 'My App',
+///     prefix: 'app',
+///     baseApiUrl: 'https://api.example.com',
 ///     lightColors: const LightColors(), // your AppColors impl
 ///     darkColors: const DarkColors(),
 ///     locales: const [EnUs(), ArAr()],  // your CoreLocale subclasses

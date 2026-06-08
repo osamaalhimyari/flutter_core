@@ -1,4 +1,4 @@
-## 0.3.0
+## 0.1.0
 
 Shared core for `driver_app_flutter` / `rider_app_flutter`. Material-aware
 (builds `ThemeData`) with **no state-management lock-in** and **no baked-in

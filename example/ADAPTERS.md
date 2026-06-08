@@ -1,4 +1,4 @@
-# Wiring `flutter_core` to Bloc / GetX / Provider
+# Wiring `my_core` to Bloc / GetX / Provider
 
 `FlutterCore.init` returns a `CoreContext` with framework-agnostic controllers:
 

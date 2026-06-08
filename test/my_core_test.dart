@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// App-supplied palette (core ships none). One seed color per palette so we can

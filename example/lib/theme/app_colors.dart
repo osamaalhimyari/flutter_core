@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_core/flutter_core.dart';
+import 'package:my_core/my_core.dart';
 
 /// Light — midnight navy primary with a warm cream canvas.
 class LightColors implements AppColors {
