@@ -1,6 +1,6 @@
 ## 0.1.0
 
-Shared core for `driver_app_flutter` / `rider_app_flutter`. Material-aware
+A configurable Flutter core package. Material-aware
 (builds `ThemeData`) with **no state-management lock-in** and **no baked-in
 content** (colors/fonts/languages come from your app).
 
