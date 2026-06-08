@@ -1,6 +1,6 @@
 name: my_core
 description: "A configurable Flutter core package: theming, localization, networking, storage, and device info via framework-agnostic controllers, with no state-management lock-in."
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/osamaalhimyari/my_core.git
 
 environment:
