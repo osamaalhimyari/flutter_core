@@ -66,6 +66,23 @@ class _ArAr extends CoreLocale {
       );
 }
 
+/// A trivial [SoundService] impl, to test that a provided domain service is
+/// surfaced on the [CoreContext].
+class _FakeSound implements SoundService {
+  @override
+  Future<void> initialize() async {}
+  @override
+  Future<void> playTripRequestedCue() async {}
+  @override
+  Future<void> playTripAcceptedCue() async {}
+  @override
+  Future<void> playTripFinishedCue() async {}
+  @override
+  Future<void> playNotificationCue() async {}
+  @override
+  Future<void> dispose() async {}
+}
+
 const _config = CoreConfig(
   appName: 'Test App',
   prefix: 'test',
@@ -90,14 +107,26 @@ void main() {
   setUp(FlutterCore.reset);
 
   group('FlutterCore.init — service opt-in (returns a CoreContext, no DI)', () {
-    test('default builds every service', () async {
-      final core = await _initInMemory();
+    test('builds every config-driven service', () async {
+      final core = await _initInMemory(
+        services: const {
+          CoreService.localization,
+          CoreService.theme,
+          CoreService.network,
+          CoreService.storage,
+          CoreService.deviceInfo,
+          CoreService.route,
+          CoreService.search,
+        },
+      );
       expect(core.localeController, isNotNull);
       expect(core.themeController, isNotNull);
       expect(core.apiClient, isNotNull);
       expect(core.tokenStorage, isNotNull);
       expect(core.keyValueStorage, isNotNull);
       expect(core.deviceInfoService, isNotNull);
+      expect(core.routeService, isNotNull);
+      expect(core.searchService, isNotNull);
     });
 
     test('builds only the requested subset', () async {
@@ -108,6 +137,26 @@ void main() {
       expect(core.themeController, isNull);
       expect(core.keyValueStorage, isNull);
       expect(core.deviceInfoService, isNull);
+      expect(core.routeService, isNull);
+    });
+
+    test('a domain service enabled without its impl throws', () async {
+      await expectLater(
+        FlutterCore.init(
+          config: _config,
+          services: const {CoreService.sound},
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('a provided domain impl is surfaced on the context', () async {
+      final core = await FlutterCore.init(
+        config: _config,
+        services: const {CoreService.sound},
+        soundService: _FakeSound(),
+      );
+      expect(core.soundService, isNotNull);
     });
 
     test('enabling theme auto-enables localization', () async {

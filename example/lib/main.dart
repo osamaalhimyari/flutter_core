@@ -25,7 +25,10 @@ const String kGoogleMapsApiKey = 'YOUR_GOOGLE_MAPS_API_KEY';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1) The pure-Dart core: config + controllers + network + storage + device.
+  // Everything is wired through FlutterCore.init: core builds the generic +
+  // maps services from config; you pass the platform impls of the abstract
+  // contracts (location/geocoding/notification/sound/foreground). They all
+  // come back on the CoreContext.
   final core = await FlutterCore.init(
     config: const CoreConfig(
       appName: 'Flutter Core Example',
@@ -34,76 +37,29 @@ Future<void> main() async {
       lightColors: LightColors(),
       darkColors: DarkColors(),
       locales: [EnUs(), ArAr()],
-      extras: {'googleMapsApiKey': kGoogleMapsApiKey},
+      googleMapsApiKey: kGoogleMapsApiKey,
     ),
-    services: const {
-      CoreService.localization,
-      CoreService.theme,
-      CoreService.network,
-      CoreService.storage,
-      CoreService.deviceInfo,
-    },
+    services: CoreService.values.toSet(), // enable everything
+    locationService: GeolocatorLocationService(),
+    geocodingService: GeocoderGeocodingService(),
+    notificationService: LocalNotificationService(),
+    soundService: SystemSoundService(),
+    foregroundService: ForegroundServiceImpl(),
     enableNetworkLogging: kDebugMode,
   );
+
+  // Initialize the impls that need it (core stores them; it doesn't call init).
   await AppInfo.init();
+  await core.notificationService!.initialize();
+  await core.soundService!.initialize();
+  await core.foregroundService!.initialize();
 
-  // 2) App-side implementations of the domain service contracts + the concrete
-  //    maps services. In a real app these live in lib/logic and get registered
-  //    with your DI; here we just hold them in a bundle.
-  final notifications = LocalNotificationService();
-  final sound = SystemSoundService();
-  final foreground = ForegroundServiceImpl();
-  await notifications.initialize();
-  await sound.initialize();
-  await foreground.initialize();
-
-  runApp(
-    ExampleApp(
-      core: core,
-      services: Demo(
-        core: core,
-        location: GeolocatorLocationService(),
-        geocoding: GeocoderGeocodingService(),
-        notifications: notifications,
-        sound: sound,
-        foreground: foreground,
-        routes: RouteService(apiKey: kGoogleMapsApiKey),
-        search: SearchService(
-          apiKey: kGoogleMapsApiKey,
-          localeService: core.localeController!,
-        ),
-      ),
-    ),
-  );
-}
-
-/// Bundles everything the demo page needs.
-class Demo {
-  final CoreContext core;
-  final LocationService location;
-  final GeocodingService geocoding;
-  final NotificationService notifications;
-  final SoundService sound;
-  final ForegroundService foreground;
-  final RouteService routes;
-  final SearchService search;
-
-  const Demo({
-    required this.core,
-    required this.location,
-    required this.geocoding,
-    required this.notifications,
-    required this.sound,
-    required this.foreground,
-    required this.routes,
-    required this.search,
-  });
+  runApp(ExampleApp(core: core));
 }
 
 class ExampleApp extends StatelessWidget {
-  const ExampleApp({super.key, required this.core, required this.services});
+  const ExampleApp({super.key, required this.core});
   final CoreContext core;
-  final Demo services;
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +87,7 @@ class ExampleApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              home: HomePage(services: services),
+              home: HomePage(core: core),
             );
           },
         );
@@ -141,8 +97,8 @@ class ExampleApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.services});
-  final Demo services;
+  const HomePage({super.key, required this.core});
+  final CoreContext core;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -153,8 +109,7 @@ class _HomePageState extends State<HomePage> {
   bool _resultError = false;
   File? _picked;
 
-  Demo get s => widget.services;
-  CoreContext get core => s.core;
+  CoreContext get core => widget.core;
 
   /// Runs [action], showing its result (or error) in the StatusCard.
   Future<void> _run(String label, Future<String> Function() action) async {
@@ -276,15 +231,15 @@ class _HomePageState extends State<HomePage> {
           _section('Location & Maps'),
           _btn(Icons.my_location, 'Current position', () {
             _run('Location', () async {
-              await s.location.requestPermission();
-              final p = await s.location.getCurrentPosition();
+              await core.locationService!.requestPermission();
+              final p = await core.locationService!.getCurrentPosition();
               return '${p.latitude.toStringAsFixed(4)}, '
                   '${p.longitude.toStringAsFixed(4)}';
             });
           }),
           _btn(Icons.place_outlined, 'Reverse geocode (Baghdad)', () {
             _run('Geocode', () async {
-              final a = await s.geocoding.reverseGeocode(
+              final a = await core.geocodingService!.reverseGeocode(
                 latitude: 33.3152,
                 longitude: 44.3661,
                 localeCode: locale.currentLanguageCode,
@@ -294,7 +249,7 @@ class _HomePageState extends State<HomePage> {
           }),
           _btn(Icons.search, 'Search places ("Baghd")', () {
             _run('Search', () async {
-              final preds = await s.search.searchLocations('Baghd');
+              final preds = await core.searchService!.searchLocations('Baghd');
               return preds.isEmpty
                   ? '0 results (set kGoogleMapsApiKey)'
                   : '${preds.length}: ${preds.first.mainText}';
@@ -302,7 +257,7 @@ class _HomePageState extends State<HomePage> {
           }),
           _btn(Icons.route_outlined, 'Build route polyline', () {
             _run('Route', () async {
-              final polys = await s.routes.buildPolylines(const [
+              final polys = await core.routeService!.buildPolylines(const [
                 LatLng(33.3152, 44.3661),
                 LatLng(33.3406, 44.4009),
               ]);
@@ -311,34 +266,30 @@ class _HomePageState extends State<HomePage> {
           }),
 
           _section('Notifications, Sound & Foreground'),
-          _btn(
-            Icons.notifications_active_outlined,
-            'Show trip notification',
-            () {
-              final title = context.tr(AppKeys.appName);
-              _run('Notification', () async {
-                await s.notifications.requestPermissions();
-                await s.notifications.showTripUpdateNotification(
-                  tripId: '42',
-                  title: title,
-                  body: 'Your driver is arriving.',
-                );
-                return 'posted';
-              });
-            },
-          ),
+          _btn(Icons.notifications_active_outlined, 'Show trip notification', () {
+            final title = context.tr(AppKeys.appName);
+            _run('Notification', () async {
+              await core.notificationService!.requestPermissions();
+              await core.notificationService!.showTripUpdateNotification(
+                tripId: '42',
+                title: title,
+                body: 'Your driver is arriving.',
+              );
+              return 'posted';
+            });
+          }),
           _btn(
             Icons.volume_up_outlined,
             'Play sound cue',
             () => _run('Sound', () async {
-              await s.sound.playTripRequestedCue();
+              await core.soundService!.playTripRequestedCue();
               return 'played';
             }),
           ),
           _btn(Icons.play_circle_outline, 'Start foreground service', () {
             final fgTitle = context.tr(AppKeys.appName);
             _run('Foreground', () async {
-              await s.foreground.start(
+              await core.foregroundService!.start(
                 notificationTitle: fgTitle,
                 notificationText: 'Listening for trips…',
               );
@@ -349,12 +300,12 @@ class _HomePageState extends State<HomePage> {
             Icons.stop_circle_outlined,
             'Stop foreground service',
             () => _run('Foreground', () async {
-              await s.foreground.stop();
+              await core.foregroundService!.stop();
               return 'stopped';
             }),
           ),
 
-          _section('Widgets'),
+          _section('Widgets & Validation'),
           _btn(Icons.info_outline, 'App message dialog', () {
             showAppMessageDialog(
               context,
@@ -392,9 +343,9 @@ class _HomePageState extends State<HomePage> {
     padding: const EdgeInsets.only(top: 20, bottom: 6),
     child: Text(
       title,
-      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      style: Theme.of(
+        context,
+      ).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.primary),
     ),
   );
 

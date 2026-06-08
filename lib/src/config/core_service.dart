@@ -1,27 +1,55 @@
-/// The opt-in services `Core.init` can build into the returned `CoreContext`.
+/// The services `FlutterCore.init` wires into the returned `CoreContext`.
 ///
-/// Pass a subset to `Core.init(services: {...})` to build only what an app
-/// needs. Omitting the argument enables all of them. Nothing is registered
-/// into any DI container — take the built objects off the `CoreContext` and
-/// wire them into get_it / GetX / Provider yourself.
+/// Pass a subset to `FlutterCore.init(services: {...})`; omit it to enable all.
+/// Nothing is registered into any DI container — take the built objects off the
+/// `CoreContext` and wire them into get_it / GetX / Provider yourself.
+///
+/// Two kinds:
+///  * **Built by core** from `CoreConfig` — no impl needed.
+///  * **Provided by you** — abstract platform contracts core can't construct;
+///    pass your impl to `FlutterCore.init(...)` (e.g. `locationService:`), or
+///    `init` throws telling you which one is missing.
 enum CoreService {
-  /// Builds a `LocaleController` (framework-agnostic, exposes a change Stream).
+  // ---- Built by core from CoreConfig ----
+  /// `LocaleController` (framework-agnostic, exposes a change Stream).
   localization,
 
-  /// Builds a `ThemeController` (framework-agnostic; exposes `ThemeData` +
-  /// a change Stream). Depends on [localization] for font-per-language —
-  /// enabling [theme] auto-enables [localization].
+  /// `ThemeController` (exposes `ThemeData` + a change Stream). Auto-enables
+  /// [localization] (font per language).
   theme,
 
-  /// Builds an `ApiClient` (a `DioApiClient`) using the configured base URL +
-  /// a `TokenStorage`.
+  /// `ApiClient` (a `DioApiClient`) using the configured base URL + a
+  /// `TokenStorage`.
   network,
 
-  /// Provisions storage: a `KeyValueStorage` (shared_preferences) used to
-  /// persist locale/theme, and a `TokenStorage` (secure). Pass your own impls
-  /// to `Core.init` to override the defaults.
+  /// `KeyValueStorage` (shared_preferences) + `TokenStorage` (secure). Used to
+  /// persist locale/theme; pass your own impls to override.
   storage,
 
-  /// Builds a `DeviceInfoService`.
+  /// `DeviceInfoService`.
   deviceInfo,
+
+  /// `RouteService` (Google Directions polylines). Uses
+  /// `CoreConfig.googleMapsApiKey`.
+  route,
+
+  /// `SearchService` (Google Places autocomplete). Uses
+  /// `CoreConfig.googleMapsApiKey`; auto-enables [localization].
+  search,
+
+  // ---- Provided by you (pass the impl to FlutterCore.init) ----
+  /// Your `LocationService` impl (e.g. geolocator). Pass `locationService:`.
+  location,
+
+  /// Your `GeocodingService` impl. Pass `geocodingService:`.
+  geocoding,
+
+  /// Your `NotificationService` impl. Pass `notificationService:`.
+  notification,
+
+  /// Your `SoundService` impl. Pass `soundService:`.
+  sound,
+
+  /// Your `ForegroundService` impl. Pass `foregroundService:`.
+  foreground,
 }

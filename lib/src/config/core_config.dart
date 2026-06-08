@@ -40,6 +40,11 @@ class CoreConfig {
   /// the ones you want centralized.
   final Map<String, String> endpoints;
 
+  /// Google Maps/Places key used by the built-in `RouteService` /
+  /// `SearchService` (when [CoreService.route] / [CoreService.search] are
+  /// enabled). Leave null if you don't use them.
+  final String? googleMapsApiKey;
+
   // ---- Theme / colors / fonts -----------------------------------------
 
   /// Your light/dark palettes — implement [AppColors] in your app.
@@ -76,6 +81,7 @@ class CoreConfig {
     this.connectTimeout = const Duration(seconds: 30),
     this.receiveTimeout = const Duration(seconds: 30),
     this.endpoints = const {},
+    this.googleMapsApiKey,
     this.fonts = const CoreFonts(),
     this.iceServers = const [],
     this.extras = const {},
