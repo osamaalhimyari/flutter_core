@@ -21,13 +21,34 @@ Two deliberate design choices:
 
 ## What's inside
 
-| Area | Built by `FlutterCore.init` (on `CoreContext`) | You implement / construct |
-|------|-----------------------------------------|----------------------------|
-| Localization | `LocaleController` (stream + `LocaleService`) | locale classes that `extend CoreLocale` |
-| Theme | `ThemeController` (stream + `ThemeService`, builds `ThemeData`) | `AppColors` (light + dark) |
-| Network | `ApiClient` (`DioApiClient`) | — |
-| Storage | `KeyValueStorage` (shared_prefs, **JSON-capable**) + `TokenStorage` (secure) | optional custom impls |
-| Device | `DeviceInfoService` | — |
+Every service flows through `FlutterCore.init` and comes back on the
+`CoreContext`. There are two kinds, both listed in the `CoreService` enum:
+
+**Built by core** from `CoreConfig` (no impl needed):
+
+| `CoreService` | On `CoreContext` |
+|---------------|------------------|
+| `localization` | `LocaleController` (stream + `LocaleService`) |
+| `theme` | `ThemeController` (stream + `ThemeService`, builds `ThemeData`) |
+| `network` | `ApiClient` (`DioApiClient`) |
+| `storage` | `KeyValueStorage` (shared_prefs, **JSON-capable**) + `TokenStorage` (secure) |
+| `deviceInfo` | `DeviceInfoService` |
+| `route` | `RouteService` (Directions polylines; uses `googleMapsApiKey`) |
+| `search` | `SearchService` (Places autocomplete; uses `googleMapsApiKey`) |
+
+**Provided by you** — abstract contracts core can't construct; pass your impl
+to `FlutterCore.init(...)` and it's surfaced on the context:
+
+| `CoreService` | Pass to `init` | On `CoreContext` |
+|---------------|----------------|------------------|
+| `location` | `locationService:` | `LocationService` |
+| `geocoding` | `geocodingService:` | `GeocodingService` |
+| `notification` | `notificationService:` | `NotificationService` |
+| `sound` | `soundService:` | `SoundService` |
+| `foreground` | `foregroundService:` | `ForegroundService` |
+
+You implement: `AppColors` (light+dark), locale classes that `extend CoreLocale`,
+and the 5 domain contracts above.
 
 | Also exported (no init needed) | |
 |--------------------------------|--|
@@ -35,9 +56,7 @@ Two deliberate design choices:
 | Localization | `AppLocalizations` + `context.tr`, `AppTranslation` (your app owns the keys) |
 | Errors / domain | `Failure`(+subtypes), `ServerException`, `ServerErrorKeys`, `UseCase`, `Validators`, `Either` |
 | Entities | `GeoPosition`, `GeoAddress`, `LocationPermissionStatus`, `SearchPrediction` |
-| Service contracts (app implements + registers) | `LocationService`, `GeocodingService`, `NotificationService`, `SoundService`, `ForegroundService` |
-| Concrete maps services | `RouteService(apiKey)`, `SearchService(apiKey, localeService)` |
-| Widgets | `showAppMessageDialog`, `showAppBottomSheet`, `StatusCard`, `ImagePickerField` |
+| Widgets (in `example/`) | `showAppMessageDialog`, `showAppBottomSheet`, `StatusCard`, `ImagePickerField` |
 | App info | `AppInfo` (call `AppInfo.init()`) |
 
 ---
@@ -199,23 +218,37 @@ final token = await core.tokenStorage!.read();
 
 ## Domain services & entities
 
-Core ships **contracts + entities**; you implement the platform impls (in
-`lib/logic/`, wrapping geolocator / geocoding / flutter_local_notifications /
-audioplayers / flutter_foreground_task) and register them with your DI:
-
-- `LocationService` → `GeoPosition`, `LocationPermissionStatus`
-- `GeocodingService` → `GeoAddress`
-- `NotificationService`, `SoundService`, `ForegroundService`
-
-> The notification/sound method names mirror the rider trip/call flow — adjust
-> per app; core only owns the contract.
-
-Concrete maps services are ready to construct (need your Google Maps key):
+Core ships **contracts + entities** for the platform services; you implement
+them (wrapping geolocator / geocoding / flutter_local_notifications /
+audioplayers / flutter_foreground_task) and **hand the impl to
+`FlutterCore.init`** — it comes back on the `CoreContext`:
 
 ```dart
-final routes = RouteService(apiKey: key);
-final search = SearchService(apiKey: key, localeService: core.localeController!);
+final core = await FlutterCore.init(
+  config: cfg,
+  services: const {CoreService.location, CoreService.geocoding,
+      CoreService.notification, CoreService.sound, CoreService.foreground,
+      CoreService.route, CoreService.search /* + the config-driven ones */},
+  locationService: GeolocatorLocationService(),     // your impl
+  geocodingService: GeocoderGeocodingService(),
+  notificationService: LocalNotificationService(),
+  soundService: SystemSoundService(),
+  foregroundService: ForegroundServiceImpl(),
+);
+// core.locationService!, core.routeService!, core.searchService! …
 ```
+
+Enabling `CoreService.location` (etc.) **without** passing its impl throws a
+clear error — core ships the contract, you provide the impl. Entities returned:
+`LocationService` → `GeoPosition` / `LocationPermissionStatus`; `GeocodingService`
+→ `GeoAddress`; `SearchService` → `SearchPrediction`.
+
+`route` / `search` are built by core from `CoreConfig.googleMapsApiKey` — no impl
+needed.
+
+> The notification/sound method names mirror the rider trip/call flow — adjust
+> per app; core only owns the contract. See `example/lib/services/` for working
+> impls of all five.
 
 ---
 
