@@ -13,7 +13,8 @@ content** (colors/fonts/languages come from your app).
 * Theme: `AppTheme.build(AppColors, font, isDark)` → `ThemeData`, `ColorsModel`
   extension. `AppColors` is implemented by your app (no shipped palette).
 * Localization: `CoreLocale` (extendable, per-app translations + fonts),
-  `AppTranslation` engine, `AppLocalizations` + `context.tr`, `CoreKeys`.
+  `AppTranslation` engine, `AppLocalizations` + `context.tr`. Core ships no key
+  strings — your app owns its keys; `Validators` return a `ValidationError` enum.
 * Storage: `TokenStorage` (`SecureTokenStorage` / `InMemoryTokenStorage`) and
   `KeyValueStorage` (`SharedPrefsStorage` / `InMemoryKeyValueStorage`) with
   string/bool/**JSON** (`readJson`/`writeJson`).

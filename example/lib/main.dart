@@ -362,6 +362,16 @@ class _HomePageState extends State<HomePage> {
               message: context.tr('home_greeting'),
             );
           }),
+          _btn(Icons.rule, 'Validate email (ValidationError → key)', () {
+            // Core returns a neutral ValidationError; the app maps it to its
+            // own key via the `.key` extension, then translates it.
+            final err = Validators.validateEmail('not-an-email');
+            setState(() {
+              _resultError = err != null;
+              _result =
+                  'Validate → ${err == null ? 'valid' : context.tr(err.key)}';
+            });
+          }),
           const SizedBox(height: 8),
           ImagePickerField(
             label: 'ImagePickerField',

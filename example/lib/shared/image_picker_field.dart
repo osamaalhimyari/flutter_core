@@ -7,7 +7,7 @@ import '../localization/app_keys.dart';
 import 'app_bottom_sheet.dart';
 
 /// Tappable card that picks an image from camera/gallery and previews it.
-/// Labels come from [CoreKeys] via `context.tr`.
+/// Labels come from [AppKeys] via `context.tr`.
 class ImagePickerField extends StatelessWidget {
   final String? label;
   final File? value;

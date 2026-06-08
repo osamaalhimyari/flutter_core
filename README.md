@@ -32,7 +32,7 @@ Two deliberate design choices:
 | Also exported (no init needed) | |
 |--------------------------------|--|
 | Theme | `AppTheme.build`, `ColorsModel`, `Theme.of(c).colorsModel` |
-| Localization | `AppLocalizations` + `context.tr`, `AppTranslation`, `CoreKeys` |
+| Localization | `AppLocalizations` + `context.tr`, `AppTranslation` (your app owns the keys) |
 | Errors / domain | `Failure`(+subtypes), `ServerException`, `ServerErrorKeys`, `UseCase`, `Validators`, `Either` |
 | Entities | `GeoPosition`, `GeoAddress`, `LocationPermissionStatus`, `SearchPrediction` |
 | Service contracts (app implements + registers) | `LocationService`, `GeocodingService`, `NotificationService`, `SoundService`, `ForegroundService` |
@@ -164,18 +164,22 @@ class EnUs extends CoreLocale {
     languageCode: 'en', countryCode: 'US', displayName: 'English',
     fontFamily: 'Ubuntu',
     translations: const {
-      CoreKeys.confirm: 'Confirm',   // keys core renders (dialogs/validators)
-      'home_title': 'Dashboard',     // your own keys
+      'confirm': 'Confirm',       // your keys (define them in your own AppKeys)
+      'home_title': 'Dashboard',
     },
   );
 }
 // CoreConfig(locales: const [EnUs(), ArAr()])
 ```
 
-`CoreKeys` is key *names* only (dialogs, validators, network errors, image
-picker) — provide values for the ones you use; an untranslated key renders
-verbatim. Look up with `context.tr(CoreKeys.confirm)` / `context.tr(MyKeys.x)`.
-Locale + theme selection are **persisted via shared_preferences** automatically.
+Core ships **no** key strings — your app owns its keys (e.g. an `AppKeys` class,
+see `example/lib/localization/app_keys.dart`). An untranslated key renders
+verbatim. Look up with `context.tr(AppKeys.confirm)`. Locale + theme selection
+are **persisted via shared_preferences** automatically.
+
+`Validators` return a neutral `ValidationError` enum (not a key string) — map it
+to your own message: `context.tr(Validators.validateEmail(x)!.key)` (the `.key`
+extension lives in your app — see the example).
 
 ---
 
