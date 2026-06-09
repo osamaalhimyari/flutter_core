@@ -1,3 +1,10 @@
+## 0.1.2
+
+* Fix `RouteService` against `flutter_polyline_points` ^3.1.0: the Google
+  Maps API key now goes to the `PolylinePoints(apiKey: ...)` constructor and
+  `getRouteBetweenCoordinates` no longer takes the removed `googleApiKey`
+  parameter.
+
 ## 0.1.0
 
 A configurable Flutter core package. Material-aware

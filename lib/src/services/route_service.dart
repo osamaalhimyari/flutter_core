@@ -6,10 +6,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 /// Falls back to a straight line on routing failures so the map still has
 /// something to draw. Pass your Google Maps API key.
 class RouteService {
-  final PolylinePoints _polylinePoints = PolylinePoints();
   final String apiKey;
+  final PolylinePoints _polylinePoints;
 
-  RouteService({required this.apiKey});
+  RouteService({required this.apiKey})
+    : _polylinePoints = PolylinePoints(apiKey: apiKey);
 
   Future<List<Polyline>> buildPolylines(
     List<LatLng> points, {
@@ -25,13 +26,17 @@ class RouteService {
 
       List<LatLng> segment = [from, to];
       try {
+        // Uses the stable legacy Directions API on purpose: it returns a plain
+        // decoded polyline that maps directly to `List<Polyline>`. Migrating to
+        // the Routes API (`getRouteBetweenCoordinatesV2`) is out of scope here.
+        // ignore: deprecated_member_use
+        final request = PolylineRequest(
+          origin: PointLatLng(from.latitude, from.longitude),
+          destination: PointLatLng(to.latitude, to.longitude),
+          mode: TravelMode.driving,
+        );
         final pr = await _polylinePoints.getRouteBetweenCoordinates(
-          googleApiKey: apiKey,
-          request: PolylineRequest(
-            origin: PointLatLng(from.latitude, from.longitude),
-            destination: PointLatLng(to.latitude, to.longitude),
-            mode: TravelMode.driving,
-          ),
+          request: request,
         );
         if (pr.points.isNotEmpty) {
           segment = pr.points
