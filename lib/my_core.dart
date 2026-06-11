@@ -75,9 +75,23 @@ export 'src/services/search_service.dart';
 // ---- Errors / use cases / utils ----
 export 'src/errors/exceptions.dart';
 export 'src/errors/failures.dart';
+export 'src/errors/failure_mapper.dart'; // mapServerExceptionToFailure
 export 'src/errors/server_error_keys.dart';
 export 'src/usecase/usecase.dart';
 export 'src/utils/validators.dart';
+export 'src/utils/json.dart'; // Json coercion helpers
+export 'src/utils/money.dart'; // Money formatting
+export 'src/utils/app_date.dart'; // AppDate formatting
+
+// ---- App service abstractions (overridable; manual/real impls) ----
+export 'src/services/nfc_service.dart'; // NfcService, ManualOnlyNfcService
+export 'src/services/image_capture_service.dart'; // ImageCaptureService
+
+// ---- Reusable themed widgets (bloc-free) ----
+export 'src/widgets/app_button.dart'; // AppButton, AppOutlinedButton
+export 'src/widgets/status_chip.dart'; // StatusChip, ChipTone
+export 'src/widgets/labeled_value.dart'; // LabeledValue, AppCard
+export 'src/widgets/state_views.dart'; // AppLoadingView/AppErrorView/AppEmptyView
 
 // ---- Convenience re-exports (functional error handling used by UseCase) ----
 export 'package:dartz/dartz.dart' show Either, Left, Right, Unit, unit;

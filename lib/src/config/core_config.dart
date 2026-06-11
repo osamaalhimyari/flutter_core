@@ -128,6 +128,18 @@ class CoreConfig {
     return path;
   }
 
+  /// A named endpoint resolved to a full request path with [prefix] prepended
+  /// exactly once: `/<prefix>/<endpoint>` (e.g. prefix `api/v1` + endpoint
+  /// `worker/login` → `/api/v1/worker/login`). Tolerant of stray leading/
+  /// trailing slashes on either part. Use this when the API version (or any
+  /// shared segment) lives in [prefix] so endpoints stay free of repetition.
+  /// If [prefix] is empty, returns the endpoint with a single leading slash.
+  String apiPath(String name) {
+    final p = prefix.replaceAll(RegExp(r'^/+|/+$'), '');
+    final path = endpoint(name).replaceAll(RegExp(r'^/+'), '');
+    return p.isEmpty ? '/$path' : '/$p/$path';
+  }
+
   /// A typed flag/secret from [extras], or `null` if absent / wrong type.
   T? flag<T>(String key) => extras[key] is T ? extras[key] as T : null;
 }

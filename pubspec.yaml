@@ -1,6 +1,6 @@
 name: my_core
 description: "A configurable Flutter core package: theming, localization, networking, storage, and device info via framework-agnostic controllers, with no state-management lock-in."
-version: 0.1.2
+version: 0.2.0
 homepage: https://github.com/osamaalhimyari/my_core.git
 
 environment:
@@ -25,6 +25,12 @@ dependencies:
   # Device / app info
   device_info_plus: ^13.1.0
   package_info_plus: ^10.1.0
+
+  # Number / date / currency formatting (Money, AppDate utils)
+  intl: ^0.20.2
+
+  # Camera / gallery capture (ImageCaptureService)
+  image_picker: ^1.1.2
 
   # Functional error handling + value equality
   dartz: ^0.10.1
