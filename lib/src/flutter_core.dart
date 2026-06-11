@@ -14,6 +14,7 @@ import 'services/route_service.dart';
 import 'services/search_service.dart';
 import 'services/sound_service.dart';
 import 'state/locale_controller.dart';
+import 'state/session_status_notifier.dart';
 import 'state/theme_controller.dart';
 import 'storage/key_value_storage.dart';
 import 'storage/token_storage.dart';
@@ -44,6 +45,10 @@ class CoreContext {
   final RouteService? routeService;
   final SearchService? searchService;
 
+  /// Coarse auth/session state for router redirects. Always present; core flips
+  /// it to unauthenticated on a 401. Use it as your router's `refreshListenable`.
+  final SessionStatusNotifier sessionStatus;
+
   // Provided by you (passed to init), surfaced here for convenience.
   final LocationService? locationService;
   final GeocodingService? geocodingService;
@@ -53,6 +58,7 @@ class CoreContext {
 
   const CoreContext({
     required this.config,
+    required this.sessionStatus,
     this.localeController,
     this.themeController,
     this.apiClient,
@@ -117,6 +123,15 @@ class FlutterCore {
     _config = config;
     AppTranslation.init(config.translationKeys);
 
+    // Session state for routing. A 401 flips it to unauthenticated (so a stale
+    // token returns the user to login from anywhere), then the app's optional
+    // [onUnauthorized] still runs (e.g. to clear the token).
+    final sessionStatus = SessionStatusNotifier();
+    void handleUnauthorized() {
+      sessionStatus.markUnauthenticated();
+      onUnauthorized?.call();
+    }
+
     final enabled = {...(services ?? CoreService.values.toSet())};
     // theme + search both need a LocaleController (font / query language).
     if (enabled.contains(CoreService.theme) ||
@@ -174,7 +189,7 @@ class FlutterCore {
         connectTimeout: config.connectTimeout,
         receiveTimeout: config.receiveTimeout,
         enableLogging: enableNetworkLogging,
-        onUnauthorized: onUnauthorized,
+        onUnauthorized: handleUnauthorized,
       );
     }
 
@@ -227,6 +242,7 @@ class FlutterCore {
 
     return CoreContext(
       config: config,
+      sessionStatus: sessionStatus,
       localeController: localeController,
       themeController: themeController,
       apiClient: apiClient,

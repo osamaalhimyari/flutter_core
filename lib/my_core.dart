@@ -60,6 +60,7 @@ export 'src/services/device_info_service.dart';
 export 'src/services/app_info.dart';
 export 'src/state/locale_controller.dart';
 export 'src/state/theme_controller.dart';
+export 'src/state/session_status_notifier.dart'; // SessionStatus(+Notifier)
 
 // ---- Domain service contracts (your app implements + registers these) ----
 export 'src/services/location_service.dart';
